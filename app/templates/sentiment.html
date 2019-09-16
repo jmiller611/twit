@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+<h1>Sentiment Analysis</h1>
+
+
+<div>
+  {{ wtf.quick_form(form) }}
+</div>
+<br>
+
+<div>
+{% if searchtext %}
+  <p>Search Results for: {{ searchtext }}</p>
+{% else %}
+{% endif %}
+
+  {% block scripts %}
+
+  <div class="chart_container" style=float:left>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+      <canvas id="pie-chart" width="450" height="400"></canvas>
+      <script>
+      Chart.defaults.global.responsive = false;
+      new Chart(document.getElementById("pie-chart"), {
+      type: 'pie',
+      data: {
+        labels: [{% for item in labels_pct %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets: [{
+          backgroundColor: ["#EC7063","#CACFD2","#52BE80"],
+          data: [{% for item in values_pct %}
+                      {{item}},
+                    {% endfor %}]
+        }]
+      },
+      options: {
+        title: {
+          display: true,
+          text: 'Sentiment Percentage'
+        }
+      }
+      });
+      </script>
+  </div>
+
+  <div class="chart_container">
+      <canvas id="bar-chart" width="450" height="400"></canvas>
+      <script>
+      Chart.defaults.global.responsive = false;
+      var ctx = document.getElementById("bar-chart").getContext('2d');
+      var bar_chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [{% for item in labels_cnt %}
+                       "{{item}}",
+                      {% endfor %}],
+          datasets: [{
+            label: '.',
+            data: [{% for item in values_cnt %}
+                          {{item}},
+                        {% endfor %}],
+            backgroundColor: ["#EC7063","#CACFD2","#52BE80"],
+          }]
+        },
+        options: {
+          title: {display: true, text: 'Sentiment Count'},
+          legend: {display: false}
+      }  
+      });
+      </script>
+  </div>
+  {% endblock %}
+
+
+<div>
+<br>
+{% if pos_df %}
+    <b>Positive Tweet Samples</b>
+    {{ pos_df|safe }}
+{% else %}
+{% endif %}
+<br>
+{% if neg_df %}
+    <b>Negative Tweet Samples</b>
+    {{ neg_df|safe }}
+{% else %}
+{% endif %}
+<br>
+{% if net_df %}
+    <b>Netural Tweet Samples</b>
+    {{ net_df|safe }}
+{% else %}
+{% endif %}
+<br>
+</div>
+{% endblock %}
+
+
+<!--
+   
+    -->

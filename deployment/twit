@@ -1,0 +1,20 @@
+server {
+    # listen on port 80 (http)
+    listen 80;
+    server_name www.jonmill.xyz jonmill.xyz 52.14.114.173;
+    location / {
+        proxy_pass http://localhost:8000;
+        include /etc/nginx/proxy_params;
+        proxy_redirect off;
+
+    access_log /var/log/twit.log;
+    error_log /var/log/twit.log;
+
+    }
+
+    location /static {
+        # handle static files directly, without forwarding to the application
+        alias /home/ubuntu/twit/app/static;
+        expires 30d;
+    }
+}
